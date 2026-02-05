@@ -36,6 +36,7 @@ class _BurgerDetailPageState extends State<BurgerDetailPage> {
           children: [
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Column(
@@ -43,15 +44,21 @@ class _BurgerDetailPageState extends State<BurgerDetailPage> {
                     children: [
                       Center(
                         child: Container(
-                          height: 250,
-                          width: 250,
+                          height: 150,
+                          width: 150,
                           decoration: BoxDecoration(
                             color: Colors.grey[200],
                             shape: BoxShape.circle,
                           ),
-                            child: Image.asset(
+                          child: Image.asset(
                             widget.burger.image,
                             fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                                  Icons.fastfood,
+                                  size: 80,
+                                  color: Colors.grey,
+                                ),
                           ),
                         ),
                       ),
@@ -67,10 +74,12 @@ class _BurgerDetailPageState extends State<BurgerDetailPage> {
                                 Text(
                                   widget.burger.name,
                                   style: const TextStyle(
-                                    fontSize: 28,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF333333),
                                   ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
@@ -80,31 +89,39 @@ class _BurgerDetailPageState extends State<BurgerDetailPage> {
                                     color: Colors.grey[500],
                                     fontWeight: FontWeight.w500,
                                   ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
                           ),
-                          Text(
-                            widget.burger.price,
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFFFF6B35),
+                          const SizedBox(width: 16),
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                widget.burger.price,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFFFF6B35),
+                                ),
+                              ),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 32),
-                      Row(
+                      Wrap(
+                        spacing: 24,
+                        runSpacing: 12,
                         children: [
                           _buildInfoChip(Icons.star, '4.8', Colors.amber),
-                          const SizedBox(width: 24),
                           _buildInfoChip(
                             Icons.access_time,
                             '30 min',
                             Colors.blue,
                           ),
-                          const SizedBox(width: 24),
                           _buildInfoChip(
                             Icons.local_fire_department,
                             '150 Kcal',
@@ -130,6 +147,7 @@ class _BurgerDetailPageState extends State<BurgerDetailPage> {
                           color: Colors.grey[600],
                         ),
                       ),
+                      const SizedBox(height: 30),
                     ],
                   ),
                 ),
@@ -167,11 +185,16 @@ class _BurgerDetailPageState extends State<BurgerDetailPage> {
                           icon: const Icon(Icons.remove),
                           color: Colors.black,
                         ),
-                        Text(
-                          '$_quantity',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                        SizedBox(
+                          width: 40,
+                          child: Center(
+                            child: Text(
+                              '$_quantity',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                         IconButton(
@@ -200,13 +223,7 @@ class _BurgerDetailPageState extends State<BurgerDetailPage> {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text(
-                          'Add to Cart',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: const AutoSizeText('Add to Cart'),
                       ),
                     ),
                   ),
@@ -221,6 +238,7 @@ class _BurgerDetailPageState extends State<BurgerDetailPage> {
 
   Widget _buildInfoChip(IconData icon, String label, Color iconColor) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: iconColor, size: 20),
         const SizedBox(width: 8),
@@ -233,6 +251,22 @@ class _BurgerDetailPageState extends State<BurgerDetailPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class AutoSizeText extends StatelessWidget {
+  final String text;
+  const AutoSizeText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }
